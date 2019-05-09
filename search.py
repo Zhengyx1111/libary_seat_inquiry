@@ -38,15 +38,15 @@ def check(roomid, date):
         for lesson in lessons:
             if(week in lesson.week):
                 if(lesson.single_or_double == 'single' and week % 2 == 0):
-                    seats[seat.seat_id] = -1
+                    seats.append(-1)
                 elif(lesson.single_or_double == 'double' and week % 2 == 1):
-                    seats[seat.seat_id] = -1
+                    seats.append(-1)
                 elif(date.hour >= timetable[lesson.start_hour] and date.hour < timetable[lesson.end_hour]):
-                    seats[seat.seat_id] = (timetable[lesson.end_hour]-date.hour)*60+60-date.minute
+                    seats.append((timetable[lesson.end_hour]-date.hour)*60+60-date.minute)
                 else:
-                    seats[seat.seat_id] = 0
+                    seats.append(0)
             else:
-                seats[seat.seat_id] = -1
+                seats.append(-1)
     return seats
 
 
