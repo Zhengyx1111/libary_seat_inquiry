@@ -13,18 +13,18 @@
 
 """
 课   时间
-1-2  8:00-10:00
-3-4  10:00-12:00
-5-6  13:00-15:00
-7-8  15:00-17:00
-9=10 18:00-20:00
+1-2  8:00-9:30
+3-4  10:00-11:30
+5-6  13:00-14:30
+7-8  15:00-16:30
+9=10 18:00-19:30
 """
 import parse as ps
 import pandas as pd
 import datetime
 
 firstday = datetime.datetime(2019, 3, 4)
-timetable = {1: 8, 2: 10, 3: 10, 4: 12, 5: 13, 6: 15, 7: 15, 8: 17, 9: 18, 10: 20}
+timetable = {1: 8, 2: 9, 3: 10, 4: 11, 5: 13, 6: 14, 7: 15, 8: 16, 9: 18, 10: 19}
 rooms = ps.parseSeat()
 
 
@@ -34,14 +34,28 @@ def check(roomid, date):
     week = (date-firstday).days//7+1
     seats = []
     for seat in rooms[roomid].seatlist:
-        min = 0
         if seat.student is None:  # 空闲座位
             seats.append(0)
         else:
             lessons = seat.student.class_.lesson
+            min = 0
             for lesson in lessons:
                 # print(week,lesson.week,lesson.day,date.weekday()+1)
-                if((week in lesson.week[0]) and (lesson.day == date.weekday()+1)):
+                weeks = []
+                if(len(lesson.week) > 1):
+                    for i in range(len(lesson.week)):
+                        if(len(lesson.week[i]) > 1):
+                            for j in range(lesson.week[i][0], lesson.week[i][1]+1):
+                                weeks.append(j)
+                        else:
+                            weeks.append(lesson.week[i][0])
+                else:
+                    if(len(lesson.week[0]) > 1):
+                        for i in range(len(lesson.week[0])):
+                            weeks.append(lesson.week[0][0])
+                    else:
+                        weeks.append(lesson.week[0][0])
+                if((week in weeks) and (lesson.day == date.weekday()+1)):
                     # print(week,lesson.week,lesson.day,date.weekday()+1)
                     if(lesson.single_or_double == 'single' and week % 2 == 0):
                         seats.append(-1)
@@ -50,23 +64,20 @@ def check(roomid, date):
                         seats.append(-2)
                         break
                     elif(date.hour >= timetable[lesson.start_hour] and date.hour < timetable[lesson.end_hour]):
-                        min += (timetable[lesson.end_hour]-date.hour)*60+60-date.minute
-                    else:
-                        seats.append(-1)
+                        min += 90-date.minute
+                    elif(date.hour == timetable[lesson.end_hour] and date.minute < 30):
+                        min += 30-date.minute
+                    if(min != 0):
+                        seats.append(min)
                         break
                 else:
-                    seats.append(-3)
-                    break
-                if(min != 0):
-                    seats.append(min)
-                else:
-                    seats.append(-1)
+                    seats.append(-4)
                     break
     return seats
 
 
 if __name__ == '__main__':
-    date = datetime.datetime(2019, 3, 18, 9, 0)
+    date = datetime.datetime(2019, 3, 18, 8, 10)
     seats = check(1, date)
     print(len(seats))
     print(seats)
