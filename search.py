@@ -34,6 +34,8 @@ def check(roomid, date):
     week = (date-firstday).days//7+1
     seats = []
     for seat in rooms[roomid].seatlist:
+        if(seat.student == NULL):
+            seats.append()
         lessons = seat.student.class_.lesson
         for lesson in lessons:
             if(week in lesson.week):
