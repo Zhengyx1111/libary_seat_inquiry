@@ -29,25 +29,28 @@ rooms = ps.parseSeat()
 
 
 def check(roomid, date):
-    # 教室id、日期时间,return空闲时间
+    # 教室id、日期时间,return seats
     # 日期格式datetime
     week = (date-firstday).days//7+1
+    seats = []
     for seat in rooms[roomid].seatlist:
         lessons = seat.student.class_.lesson
         for lesson in lessons:
             if(week in lesson.week):
                 if(lesson.single_or_double == 'single' and week % 2 == 0):
-                    return -1
+                    seats[seat.seat_id] = -1
                 elif(lesson.single_or_double == 'double' and week % 2 == 1):
-                    return -1
+                    seats[seat.seat_id] = -1
                 elif(date.hour >= timetable[lesson.start_hour] and date.hour < timetable[lesson.end_hour]):
-                    return (timetable[lesson.end_hour]-date.hour)*60+60-date.minute
+                    seats[seat.seat_id] = (timetable[lesson.end_hour]-date.hour)*60+60-date.minute
                 else:
-                    return 0
+                    seats[seat.seat_id] = 0
             else:
-                return -1
+                seats[seat.seat_id] = -1
+    return seats
 
 
 if __name__ == '__main__':
     date = datetime.datetime.now()
-    check(1, date)
+    seats = check(1, date)
+    print(seats)
