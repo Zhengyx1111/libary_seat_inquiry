@@ -34,25 +34,32 @@ def check(roomid, date):
     week = (date-firstday).days//7+1
     seats = []
     for seat in rooms[roomid].seatlist:
-        if(seat.student == NULL):
-            seats.append()
-        lessons = seat.student.class_.lesson
-        for lesson in lessons:
-            if(week in lesson.week):
-                if(lesson.single_or_double == 'single' and week % 2 == 0):
-                    seats.append(-1)
-                elif(lesson.single_or_double == 'double' and week % 2 == 1):
-                    seats.append(-1)
-                elif(date.hour >= timetable[lesson.start_hour] and date.hour < timetable[lesson.end_hour]):
-                    seats.append((timetable[lesson.end_hour]-date.hour)*60+60-date.minute)
+        if seat.student is None:
+            seats.append(200)
+        else:    
+            lessons = seat.student.class_.lesson
+            for lesson in lessons:
+                if(week in lesson.week):
+                    if(lesson.single_or_double == 'single' and week % 2 == 0):
+                        seats.append(-1)
+                        break
+                    elif(lesson.single_or_double == 'double' and week % 2 == 1):
+                        seats.append(-2)
+                        break
+                    elif(date.hour >= timetable[lesson.start_hour] and date.hour < timetable[lesson.end_hour]):
+                        seats.append((timetable[lesson.end_hour]-date.hour)*60+60-date.minute)
+                        break
+                    else:
+                        seats.append(0)
+                        break
                 else:
-                    seats.append(0)
-            else:
-                seats.append(-1)
+                    seats.append(-3)
+                    break
     return seats
 
 
 if __name__ == '__main__':
-    date = datetime.datetime.now()
+    date = datetime.datetime(2019,3,4,16,0)
     seats = check(1, date)
+    print(len(seats))
     print(seats)
