@@ -59,7 +59,7 @@ def check(roomid, date):
 
 
 if __name__ == '__main__':
-    date = datetime.datetime(2019,3,4,16,0)
+    date = datetime.datetime(2019, 3, 4, 16, 0)
     seats = check(1, date)
     print(len(seats))
     print(seats)
