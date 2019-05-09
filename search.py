@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
+
 '''
 @File    :   search.py
 @Time    :   2019/05/09 12:57:17
@@ -22,11 +23,31 @@ import parse as ps
 import pandas as pd
 import datetime
 
-firstday = 
+firstday = datetime.datetime(2019, 3, 4)
+timetable = {1: 8, 2: 10, 3: 10, 4: 12, 5: 13, 6: 15, 7: 15, 8: 17, 9: 18, 10: 20}
 rooms = ps.parseSeat()
 
-def check(roomid,date,time,seat):
-    #教室id、日期、时间、座位，时间包含小时hour分钟min两个int,return空闲时间
-    #日期格式
-    rooms[roomid]
-    
+
+def check(roomid, date):
+    # 教室id、日期时间,return空闲时间
+    # 日期格式datetime
+    week = (date-firstday)//7+1
+    for seat in rooms[roomid].seatlist:
+        lessons = seat.student.class_.lesson
+        for lesson in lessons:
+            if(week in lesson.week):
+                if(lesson.single_or_double == 'single' and week % 2 == 0):
+                    return -1
+                elif(lesson.single_or_double == 'double' and week % 2 == 1):
+                    return -1
+                elif(date.hour >= timetable[lesson.start_hour] and date.hour < timetable[lesson.end_hour]):
+                    return (timetable[lesson.end_hour]-date.hour)*60+60-date.minute
+                else:
+                    return 0
+            else:
+                return -1
+
+
+if __name__ == '__main__':
+    date = datetime.datetime.now()
+    check(1, date)

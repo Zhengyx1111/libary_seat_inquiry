@@ -14,8 +14,11 @@
 
 import datetime
 
+
 def test():
-    yes = datetime.datetime(2019,5,8)
-    print(datetime.dateime.now()-yes)
+    yes = datetime.datetime(2019, 5, 8)
+    print((datetime.datetime.now()-yes).days)
+    print(yes.hour)
+
 
 test()
